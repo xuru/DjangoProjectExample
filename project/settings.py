@@ -38,7 +38,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-  ("armon@example.com"),
+  ("nobody@example.com"),
 )
 
 MANAGERS = ADMINS
@@ -50,7 +50,7 @@ MANAGERS = ADMINS
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Los_Angeles'
+TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -205,13 +205,13 @@ LOGGING = {
 }
 
 # Check which environment to load
-if os.path.exists(make_abs_path("PRODUCTION")):
-  from settings_prod import *
-  ENVIRONMENT = "PRODUCTION"
-elif os.path.exists(make_abs_path("STAGING")):
-  from settings_stage import *
-  ENVIRONMENT = "STAGING"
-else:
-  from settings_dev import *
-  ENVIRONMENT = "DEV"
+#if os.path.exists(make_abs_path("PRODUCTION")):
+#  from settings_prod import *
+#  ENVIRONMENT = "PRODUCTION"
+#elif os.path.exists(make_abs_path("STAGING")):
+#  from settings_stage import *
+#  ENVIRONMENT = "STAGING"
+#else:
+#  from settings_dev import *
+#  ENVIRONMENT = "DEV"
 
