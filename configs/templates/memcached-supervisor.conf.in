@@ -1,0 +1,23 @@
+##############################################################
+#  Buildout variables used:
+#  
+#  ${buildout:directory} 
+#  ${buildout:bin-directory}
+#
+#  ${libevent:location}
+#  ${buildout:vardir}
+#  ${supervisor:autostart_apps}
+#  ${supervisor:autorestart_apps}
+#
+##############################################################
+
+[program:memcached]
+command = ${buildout:bin-directory}/memcached
+process_name = memcached
+directory = ${buildout:bin-directory}
+autostart = ${supervisor:autostart_apps}
+autorestart = ${supervisor:autorestart_apps} 
+priority = 10
+environment = LD_LIBRARY_PATH=${libevent:location}/lib
+stdout_logfile=${buildout:vardir}/log/memcached.log
+stderr_logfile=${buildout:vardir}/log/memcached-error.log

@@ -1,0 +1,25 @@
+##############################################################
+#  Buildout variables used:
+#  
+#  ${buildout:directory} 
+#  ${buildout:bin-directory}
+#
+#  ${buildout:vardir}
+#  ${buildout:settings}
+#  ${supervisor:autostart_apps}
+#  ${supervisor:autorestart_apps}
+#
+##############################################################
+
+[program:celeryd]
+command= ${buildout:directory}/manage.py celeryd --loglevel=INFO
+directory=${buildout:directory}
+stdout_logfile=${buildout:vardir}/log/celeryd.log
+stderr_logfile=${buildout:vardir}/log/celeryd-error.log
+environment = PATH='${buildout:bin-directory}', PYTHONPATH='${buildout:directory}/apps', DJANGO_SETTINGS_MODULE='${buildout:settings}'
+numprocs=1
+autostart = ${supervisor:autostart_apps}
+autorestart = ${supervisor:autorestart_apps} 
+startsecs=10
+stopwaitsecs = 600
+priority=2

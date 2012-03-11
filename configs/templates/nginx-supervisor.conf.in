@@ -1,0 +1,19 @@
+##############################################################
+#  Buildout variables used:
+#  
+#  ${buildout:directory}
+#  ${buildout:etcdir}
+#  ${buildout:vardir}
+#  ${supervisor:autostart_apps}
+#  ${supervisor:autorestart_apps}
+#
+##############################################################
+
+[program:nginx]
+command=${nginx:location}/sbin/nginx -c ${buildout:etcdir}/nginx.conf
+stdout_logfile=${buildout:vardir}/log/nginx.log
+stderr_logfile=${buildout:vardir}/log/nginx-error.log
+autostart = ${supervisor:autostart_apps}
+autorestart = ${supervisor:autorestart_apps} 
+directory = ${buildout:directory}/.build/parts/nginx/sbin
+priority = 1

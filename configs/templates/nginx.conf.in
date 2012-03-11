@@ -1,0 +1,40 @@
+##############################################################
+#  Buildout variables used:
+#  
+#  ${nginx:server_name}
+#  ${buildout:vardir}
+#  ${buildout:etcdir}
+#
+##############################################################
+
+user  www-data www-data;
+worker_processes  4;
+worker_rlimit_nofile 8192;
+
+error_log  ${buildout:vardir}/log/nginx/error.log warn;
+
+events {
+    worker_connections  2048;
+    use epoll;
+}
+
+
+http {
+    include mime.types;
+    default_type application/octet-stream;
+    client_max_body_size 50m;
+    sendfile on;
+    gzip on;
+    keepalive_timeout 65;
+    access_log ${buildout:vardir}/log/nginx/access.log;
+
+    server {
+        listen 80;
+        # Send everything to https
+        rewrite ^(.*) https://$host$request_uri?  permanent;
+        server_name ${nginx:server_name};
+    }
+
+    # include all the servers...
+    include ${buildout:etcdir}/etc/nginx/sites-enabled/*;
+}

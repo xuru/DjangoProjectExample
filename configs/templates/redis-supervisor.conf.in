@@ -1,0 +1,24 @@
+##############################################################
+#  Buildout variables used:
+#  
+#  ${buildout:directory}
+#  ${buildout:vardir}
+#  ${buildout:etcdir}
+#
+#  ${supervisor:autostart_apps}
+#  ${supervisor:autorestart_apps}
+#
+##############################################################
+
+[program:redis]
+user  www-data www-data;
+directory = ${buildout:directory}
+command = ${buildout:directory}/bin/redis-server ${buildout:etcdir}/redis.conf
+autostart = ${supervisor:autostart_apps}
+autorestart = ${supervisor:autorestart_apps} 
+priority = 20
+startsecs = 10
+startretries = 3
+stopwaitsecs = 10
+stdout_logfile=${buildout:vardir}/log/redis.log
+stderr_logfile=${buildout:vardir}/log/redis-error.log

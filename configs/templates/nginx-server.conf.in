@@ -1,0 +1,65 @@
+##############################################################
+#  Buildout variables used:
+#  
+#  ${buildout:directory}
+#
+#  ${nginx:server_name}
+#  ${buildout:site-packages} 
+#  ${buildout:vardir}
+#  ${buildout:name}
+#
+##############################################################
+
+server {
+    listen 80;
+    server_name ${nginx:server_name};
+    set $home /server/${nginx:server_name};
+
+    # Send everything to https
+    rewrite ^(.*) https://$host$request_uri?  permanent;
+}
+
+server {
+    listen 443 default_server ssl;
+    server_name ${nginx:server_name};
+
+    # This is the django admin media
+    location /admin_media {
+        alias ${buildout:site-packages}/django/contrib/admin/media/;
+    }
+
+    # Static js/css/img
+    location /static/ {
+        alias ${buildout:directory}/apps/escort/static/;
+    }
+
+    # Media / Uploads
+    location /media/ {
+        alias ${buildout:directory}/media/;
+    }
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Protocol $scheme;
+        proxy_set_header X-Url-Scheme $scheme;
+        proxy_redirect off;
+        include uwsgi_params;
+        uwsgi_param UWSGI_SCRIPT wsgi;
+        uwsgi_pass unix:///${buildout:vardir}/uwsgi-${buildout:name}.sock;
+    }
+
+    #auth_basic "Auth";
+    #auth_basic_user_file htpasswd;
+
+    # Read it! http://wiki.nginx.org/HttpSslModule
+    ssl                  on;
+    ssl_certificate      ${buildout:name}.pem;
+    ssl_certificate_key  ${buildout:name}.key;
+    ssl_session_timeout  20m;
+    ssl_session_cache    shared:SSL:10m;  # ~ 40,000 sessions
+    ssl_protocols        SSLv3 TLSv1; # SSLv2
+    # TODO: this cipher list is untested and my be too restrictive (not wure if @STRENGTH notation is compatiple)  http://www.skytale.net/blog/archives/22-SSL-cipher-setting.html
+    ssl_ciphers          ALL:!aNull:!eNull:!SSLv2:!kEDH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+EXP:@STRENGTH;
+    ssl_prefer_server_ciphers on;
+}

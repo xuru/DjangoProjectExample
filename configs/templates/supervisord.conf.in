@@ -1,0 +1,19 @@
+[inet_http_server]
+port = ${supervisor:port}
+
+[supervisord]
+logfile = ${buildout:vardir}/log/supervisord.log
+logfile_maxbytes = 50MB
+logfile_backups = 10
+loglevel = info
+pidfile = ${buildout:vardir}/run/supervisord.pid
+nodaemon = false
+
+[supervisorctl]
+serverurl = http://127.0.0.1:${supervisor:port}
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory=supervisor.rpcinterface:make_main_rpcinterface
+
+[include]
+files = ${buildout:etcdir}/supervisor.d/*-supervisor.conf

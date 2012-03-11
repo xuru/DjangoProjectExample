@@ -1,0 +1,44 @@
+##############################################################
+#  Buildout variables used:
+#  
+#  ${buildout:directory}
+#  ${buildout:bin-directory}
+#  ${buildout:vardir}
+#  ${buildout:etcdir}
+#  ${buildout:name}
+#  ${buildout:env} [dev, prod, stage]
+
+#  ${uwsgi:wsgi-path}
+#  ${uwsgi:socket}
+#
+#  ${facts:user.name}
+#
+#  ${supervisor:autostart_apps}
+#  ${supervisor:autorestart_apps}
+#
+##############################################################
+
+[program:uwsgi]
+command=${buildout:bin-directory}/uwsgi
+  --gid www-data
+  --uid www-data
+  --master
+  --virtualenv ${buildout:directory}/.build/venv
+  --wsgi-file ${uwsgi:wsgi-path}
+  --socket ${uwsgi:socket}
+  --pythonpath ${buildout:bin-directory}
+  --pidfile ${buildout:vardir}/run/uwsgi.pid
+  --logto ${buildout:vardir}/log/uwsgi.log
+  --logdate
+  --sharedarea 4
+  --memory-report
+  --processes 4
+
+environment=DJANGO_SETTINGS_MODULE='${buildout:name}.settings_${buildout:env}'
+user=${facts:user.name}
+autostart = ${supervisor:autostart_apps}
+autorestart = ${supervisor:autorestart_apps} 
+stdout_logfile=${buildout:vardir}/log/uwsgi.log
+stderr_logfile=${buildout:vardir}/log/uwsgi-error.log
+stopsignal=QUIT
+priority=920
